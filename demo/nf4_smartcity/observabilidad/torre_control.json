@@ -1,0 +1,18 @@
+{
+  "title": "Torre de control · Pipeline de sensores (demo)",
+  "description": "Dashboard como código. Se versiona en git, se despliega igual en dev y prod.",
+  "panels": [
+    {"id": 1, "title": "Tasa de error (SLO 5%)", "type": "stat",
+     "targets": [{"expr": "rate(errores_total[5m]) / rate(eventos_procesados_total[5m])"}],
+     "thresholds": [{"value": 0.05, "color": "red"}]},
+    {"id": 2, "title": "Latencia p95 (SLO 0.5s)", "type": "graph",
+     "targets": [{"expr": "histogram_quantile(0.95, rate(latencia_procesamiento_segundos_bucket[5m]))"}]},
+    {"id": 3, "title": "Frescura del dato (SLO 60s)", "type": "stat",
+     "targets": [{"expr": "datos_frescura_segundos"}],
+     "thresholds": [{"value": 60, "color": "red"}]},
+    {"id": 4, "title": "¿Pipeline vivo? (up)", "type": "stat",
+     "targets": [{"expr": "up{job=\"pipeline_ciudad\"}"}],
+     "description": "El panel del silencio: si el pipeline muere, este panel lo delata."}
+  ],
+  "schemaVersion": 39
+}

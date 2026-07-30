@@ -1,0 +1,59 @@
+{
+  "uid": "torre-control",
+  "title": "Torre de Control — SLIs del servidor de juego",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Throughput (eventos/s)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "rate(eventos_procesados_total[1m])",
+          "datasource": {
+            "type": "prometheus"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Tasa de error (SLI)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "rate(errores_total[1m]) / rate(eventos_procesados_total[1m])",
+          "datasource": {
+            "type": "prometheus"
+          }
+        }
+      ]
+    }
+  ]
+}

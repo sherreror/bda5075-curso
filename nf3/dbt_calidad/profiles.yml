@@ -1,0 +1,4 @@
+calidad_alertas:
+  target: dev
+  outputs:
+    dev: {type: duckdb, path: calidad.duckdb}

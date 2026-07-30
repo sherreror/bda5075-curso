@@ -1,0 +1,25 @@
+# Datos generados y artefactos (se regeneran con los scripts)
+**/datos/raw/
+**/datos/procesado/
+**/datamart/
+**/almacen/
+**/target/
+**/*.duckdb
+# dbt genera también estos al ejecutarse (NF3)
+**/logs/
+**/dbt_packages/
+# Datos que generan las demos de las videoconferencias (se regeneran con preparar_demo.py)
+demo/*/raw/
+demo/*/bench/
+demo/*/proc/
+demo/*/data_mart/
+demo/*/dbt_calidad/seeds/
+**/entrega/*
+!**/entrega/LEEME.txt
+**/resultados.json
+# Python / notebooks
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+# Copias de seguridad locales (p. ej. las del script del devcontainer)
+*.bak

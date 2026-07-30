@@ -1,0 +1,56 @@
+{
+  "name": "Big Data Aplicado (5075)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [
+    8888,
+    4040,
+    3000,
+    9090,
+    8000,
+    27017
+  ],
+  "portsAttributes": {
+    "8888": {
+      "label": "JupyterLab"
+    },
+    "4040": {
+      "label": "Spark UI (NF2)"
+    },
+    "3000": {
+      "label": "Grafana (NF4)"
+    },
+    "9090": {
+      "label": "Prometheus (NF4)"
+    },
+    "8000": {
+      "label": "Pipeline metrics (NF4)"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-toolsai.jupyter",
+        "ms-python.python",
+        "innoverio.vscode-dbt-power-user",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  },
+  "postCreateCommand": "java -version && python -c \"import pyspark, deltalake, duckdb, dbt.version, prometheus_client; print('Entorno OK · PySpark', pyspark.__version__)\"",
+  "hostRequirements": {
+    "cpus": 2
+  },
+  "containerEnv": {
+    "SPARK_LOCAL_IP": "127.0.0.1",
+    "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+  }
+}

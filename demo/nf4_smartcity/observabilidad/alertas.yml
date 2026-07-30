@@ -1,0 +1,44 @@
+# Alertas como código · demo NF4 (Smart City).
+# Cada regla es un SLO, escrito. En un CI real esto se valida con:
+#     promtool check rules alertas.yml
+# En la demo lo validamos con Python (mismo objetivo: que el YAML es correcto).
+groups:
+  - name: slo_pipeline_ciudad
+    rules:
+      - alert: TasaErroresAlta
+        expr: (rate(errores_total[5m]) / rate(eventos_procesados_total[5m])) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tasa de error por encima del SLO (5%)"
+          description: "El pipeline de sensores supera el objetivo de fiabilidad."
+
+      - alert: DatoObsoleto
+        expr: datos_frescura_segundos > 60
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Frescura del dato por encima del SLO (60s)"
+          description: "Los datos de sensores llevan demasiado tiempo sin actualizarse."
+
+      - alert: LatenciaAlta
+        expr: histogram_quantile(0.95, rate(latencia_procesamiento_segundos_bucket[5m])) > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latencia p95 por encima del SLO (0.5s)"
+          description: "El procesamiento por lectura es más lento de lo aceptable."
+
+      # La alerta del SILENCIO: la más importante y la que casi nadie escribe.
+      # Salta cuando la métrica DESAPARECE (el pipeline ha muerto).
+      - alert: PipelineCaido
+        expr: absent(eventos_procesados_total)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "El pipeline no reporta métricas"
+          description: "absent(): la serie ha desaparecido. El servicio puede estar caído."

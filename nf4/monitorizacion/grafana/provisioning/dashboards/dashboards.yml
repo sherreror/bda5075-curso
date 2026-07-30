@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: torre_control
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

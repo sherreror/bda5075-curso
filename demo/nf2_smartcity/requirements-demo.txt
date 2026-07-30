@@ -1,0 +1,6 @@
+# Dependencias de la demo de la VC2. Spark y DuckDB ya vienen en el devcontainer
+# del curso (los usa la actividad del NF2 y NF3). Este fichero solo documenta las
+# versiones con las que se probó la demo. NO reinstalar en el devcontainer.
+#
+# pyspark   (ya en el entorno del curso)
+# duckdb    (ya en el entorno del curso)

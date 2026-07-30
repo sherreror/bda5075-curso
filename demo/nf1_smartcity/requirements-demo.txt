@@ -1,0 +1,6 @@
+# Dependencias EXCLUSIVAS de la demo de la VC1. NO van en el devcontainer.
+# El entorno que ejecuta y corrige las actividades evaluables no se toca.
+#
+#   pip install -r demo/nf1_smartcity/requirements-demo.txt
+#
+pymongo>=4.6        # solo para el ACTO 4 (bloque opcional, requiere Docker)

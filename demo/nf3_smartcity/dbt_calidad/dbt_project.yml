@@ -1,0 +1,9 @@
+name: calidad_demo
+version: "1.0"
+profile: calidad_demo
+seeds:
+  calidad_demo:
+    +quote_columns: false
+models:
+  calidad_demo:
+    +materialized: view

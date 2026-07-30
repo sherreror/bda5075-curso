@@ -1,0 +1,19 @@
+# Reglas de alerta "como código" (RA4.3).
+# Valida la sintaxis (promtool va DENTRO del contenedor de Prometheus, no en tu terminal):
+#   docker compose exec prometheus promtool check rules /etc/prometheus/alertas.yml
+# TODO: completa las reglas DatoObsoleto y LatenciaAlta siguiendo el ejemplo.
+groups:
+  - name: slo_torre_control
+    rules:
+      - alert: TasaErroresAlta
+        expr: (rate(errores_total[5m]) / rate(eventos_procesados_total[5m])) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tasa de error por encima del SLO (5%)"
+          description: "El pipeline supera el objetivo de fiabilidad de errores."
+
+      # TODO DatoObsoleto: dispara si datos_frescura_segundos > 60 (severity warning)
+
+      # TODO LatenciaAlta: dispara si el p95 de latencia_procesamiento_segundos > 0.5

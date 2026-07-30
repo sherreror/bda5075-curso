@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: stg_alertas
+    description: "Reportes anti-cheat a auditar"
+    columns:
+      - name: id_alerta
+        tests: [unique, not_null]
+      # TODO severidad: añade tests not_null y accepted_values
+      #   (valores válidos: baja, media, alta, critica)

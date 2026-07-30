@@ -1,0 +1,22 @@
+# Entorno único del módulo 5075 — versiones FIJADAS y probadas (NF1–NF5).
+#
+# Solo lo que el alumnado usa de verdad. Las herramientas de corrección
+# (papermill, nbformat) viven en el repo de corrección, no aquí.
+#
+# Núcleo de datos
+pandas==3.0.2
+numpy==2.4.4
+pyarrow==24.0.0            # NF1 (Delta) · NF3 (parquet)
+deltalake==1.6.1           # NF1
+duckdb==1.5.4              # NF3 (motor de dbt)
+matplotlib==3.10.8         # NF1 · NF2 (gráficos de C4)
+# Procesamiento distribuido (NF2/NF5)
+pyspark==4.1.2
+# Calidad como código (NF3)
+dbt-core==1.11.11
+dbt-duckdb==1.10.1
+# Monitorización (NF4)
+prometheus-client==0.25.0
+pyyaml==6.0.3              # NF4: validación de alertas.yml
+# Kernel de los cuadernos — NO retirar: es lo que ejecuta los .ipynb en VS Code
+ipykernel

@@ -1,0 +1,7 @@
+# Perfil local del proyecto dbt de la demo. Usa DuckDB: sin servidor, un fichero.
+calidad_demo:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: calidad.duckdb

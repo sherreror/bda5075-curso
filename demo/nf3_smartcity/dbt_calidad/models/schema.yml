@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_alertas
+    description: "Alertas de calidad del aire de la Smart City (caso demostración)."
+    columns:
+      - name: id_alerta
+        description: "Identificador único de la alerta."
+        tests:
+          - unique          # Unicidad
+          - not_null        # Completitud
+      - name: severidad
+        description: "Nivel declarado de la alerta."
+        tests:
+          - not_null        # Completitud
+          - accepted_values:  # Validez
+              values: ["baja", "media", "alta", "critica"]
