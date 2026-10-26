@@ -30,16 +30,16 @@ python demo/nf1_smartcity/preparar_demo.py
 #    demo/nf1_smartcity/VC1_demo_smartcity.ipynb
 ```
 
-El **ACTO 4** (MongoDB) es opcional y necesita dos cosas más:
+El **ACTO 4** (MongoDB) es opcional. `pymongo` ya viene en el entorno del curso; lo único que
+hace falta es levantar el servidor con Docker:
 
 ```bash
-pip install -r demo/nf1_smartcity/requirements-demo.txt
 docker run -d --name mongo-demo -p 27017:27017 mongo:7
 # al terminar:
 docker stop mongo-demo && docker rm mongo-demo
 ```
 
-Si no lo ejecutas, el resto del cuaderno funciona igual: solo fallarán esas tres celdas.
+Si no lo levantas, el resto del cuaderno funciona igual: solo fallarán esas tres celdas.
 
 ## Ficheros
 
@@ -47,7 +47,20 @@ Si no lo ejecutas, el resto del cuaderno funciona igual: solo fallarán esas tre
 |---|---|
 | `preparar_demo.py` | Genera los datos. `raw/` (sucio, 5.000 filas), `bench/` (1 M de filas ya escritas en CSV y Parquet), `proc/` (vacío, lo llena el ACTO 3). |
 | `VC1_demo_smartcity.ipynb` | El cuaderno de la sesión. |
-| `requirements-demo.txt` | Solo `pymongo`, solo para el ACTO 4. |
+| `requirements-demo.txt` | `pymongo`, para el ACTO 4. Ya está en el entorno del curso; el fichero se conserva por si se ejecuta la demo fuera de él. |
 
 `raw/`, `bench/` y `proc/` están en el `.gitignore`: no se versionan (el CSV pesa ~50 MB) y se
 regeneran en segundos.
+
+---
+
+### Reglas de esta carpeta *(nota para el equipo docente)*
+
+1. **La demo no toca el `devcontainer`.** Nunca. Si necesitara una dependencia que el entorno
+   no trae, iría en `requirements-demo.txt`. El entorno que ejecuta y corrige las actividades
+   evaluables se queda intacto: sin rebuild, sin riesgo, sin Codespaces divergentes. *(Hoy no
+   hace falta nada extra: el entorno del curso ya fija `pymongo==4.10.1` para el NF1.)*
+2. **La demo no escribe fuera de `demo/`.** Sus datos viven aquí y están *gitignored*.
+3. **La demo no revela la solución de la actividad.** Caso distinto, columnas distintas,
+   umbrales distintos. Y las fases evaluables de limpieza **no se resuelven en pantalla**:
+   solo se enseña el diagnóstico y el error típico.

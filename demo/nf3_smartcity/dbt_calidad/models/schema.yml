@@ -15,3 +15,9 @@ models:
           - not_null        # Completitud
           - accepted_values:  # Validez
               values: ["baja", "media", "alta", "critica"]
+      - name: distrito
+        description: "Distrito de la alerta. Debe existir en el catálogo oficial."
+        tests:
+          - relationships:    # Integridad referencial (el anti-join, en YAML)
+              to: ref('distritos')
+              field: distrito

@@ -54,7 +54,7 @@ def sha256(path):
 
 
 def frente_integridad():
-    """Dos directorios distribuidos + un manifiesto de checksums.
+    """Dos directorios distribuidos + un manifiesto de metadatos (sha256 + bytes).
     Uno está entero y declarado (_SUCCESS); el otro, ni completo ni declarado.
     Y un fichero del bueno se corrompe DESPUÉS de firmar el manifiesto."""
     manifiesto = {}
@@ -64,15 +64,21 @@ def frente_integridad():
         p = f"{DIST}/part-{i}.csv"
         pd.DataFrame({"id": range(i * 100, (i + 1) * 100),
                       "lectura": np.round(rng.uniform(20, 60, 100), 1)}).to_csv(p, index=False)
-        manifiesto[f"part-{i}.csv"] = sha256(p)
+        # Metadatos de cada pieza: su huella y su tamaño (como hace el log de Delta)
+        manifiesto[f"part-{i}.csv"] = {"sha256": sha256(p), "bytes": os.path.getsize(p)}
     open(f"{DIST}/_SUCCESS", "w").close()  # el sello: "el job terminó entero"
 
     # Guardamos el manifiesto ANTES de corromper
     json.dump(manifiesto, open(f"{RAW}/manifiesto.json", "w"), indent=2)
 
-    # Y AHORA corrompemos una particion (bit rot / transferencia a medias)
-    with open(f"{DIST}/part-2.csv", "a") as f:
-        f.write("basura,corrupcion\n")   # el checksum ya no cuadrará
+    # Y AHORA corrompemos una partición SIN cambiar su tamaño: un solo dígito de
+    # una lectura cambia (bit rot). El control de tamaño no lo ve; el checksum sí.
+    p = f"{DIST}/part-2.csv"
+    datos = bytearray(open(p, "rb").read())
+    i = datos.index(b"\n") + 1            # primera fila de datos
+    i = datos.index(b",", i) + 1          # primer carácter de la lectura
+    datos[i] = ord(str((int(chr(datos[i])) + 1) % 10))   # p. ej. 45.3 -> 55.3
+    open(p, "wb").write(bytes(datos))
 
     # Directorio incompleto: solo 2 particiones y SIN _SUCCESS
     for i in range(2):
@@ -106,9 +112,15 @@ def frente_calidad_dbt():
         "distrito": rng.choice(["Centro", "Ensanche", "Norte", "Sur"], N),
     })
     df.loc[rng.choice(N, 60, replace=False), "severidad"] = None          # 60 nulos
-    df.loc[rng.choice(N, 2, replace=False), "severidad"] = "URGENTISIMA"  # 2 categorías inválidas
+    df.loc[rng.choice(N, 2, replace=False), "severidad"] = "URGENTISIMA"  # 2 filas, 1 valor inválido
+    # Datos fantasma (integridad referencial): alertas de un distrito que NO existe
+    # en el catálogo. Va al final para no alterar los números anteriores.
+    df.loc[rng.choice(N, 12, replace=False), "distrito"] = "Puerto"       # 12 fantasmas
     os.makedirs(f"{BASE}/dbt_calidad/seeds", exist_ok=True)
     df.to_csv(f"{BASE}/dbt_calidad/seeds/alertas_raw.csv", index=False)
+    # El catálogo oficial de distritos (la tabla a la que apunta la alerta)
+    pd.DataFrame({"distrito": ["Centro", "Ensanche", "Norte", "Sur"]}).to_csv(
+        f"{BASE}/dbt_calidad/seeds/distritos.csv", index=False)
     return df
 
 
@@ -117,10 +129,11 @@ if __name__ == "__main__":
     frente_integridad()
     frente_baseline()
     df = frente_calidad_dbt()
-    print("[1/3] Integridad : dist_ok/ (4 partes + _SUCCESS, 1 corrupta) + dist_incompleto/ (2 partes, sin _SUCCESS)")
+    print("[1/3] Integridad : dist_ok/ (4 partes + _SUCCESS, 1 corrupta SIN cambiar de tamaño)"
+          " + dist_incompleto/ (2 partes, sin _SUCCESS)")
     print("[2/3] Baseline   : sensor_velocidad.csv (200 normales + 40 atascos)")
-    print(f"[3/3] Calidad dbt: stg_alertas.csv ({len(df)} filas: 60 nulos, 30 duplicados, "
-          f"~fuera de rango, 2 categorías inválidas)")
+    print(f"[3/3] Calidad dbt: alertas_raw.csv ({len(df)} filas: 60 nulos, 30 ids duplicados, "
+          f"~fuera de rango, 1 categoría inválida, 12 distritos fantasma) + distritos.csv")
     print("\n[OK] Demo lista.")
     print("      El proyecto dbt está en demo/nf3_smartcity/dbt_calidad/")
     print("      >> Ejecuta el cuaderno una vez para verificar y anota tus números.")
