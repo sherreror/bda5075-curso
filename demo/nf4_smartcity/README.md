@@ -15,7 +15,7 @@ basura"*— y construye la maquinaria para no volver a fiarse del verde:
 | 1 | Instrumentar: Counter, Gauge, Histogram | §4.2 |
 | 2 | La media miente: el SLO es p95, no media | §4.2 |
 | 3 | El SLO como código: `expr`, `for`, `severity` | §4.4, §4.5 |
-| 4 | **La alerta del silencio**: `up`, `absent()` | §4.5 |
+| 4 | **La alerta del silencio**: matamos el pipeline; `up`, `absent()` | §4.5 |
 | 5 | Observabilidad como código (sin capturas) | §4.6 |
 
 ## Cómo ejecutarlo
@@ -32,14 +32,20 @@ python demo/nf4_smartcity/preparar_demo.py     # genera raw/ (~1 s)
 el SLO se evalúa en Python; las alertas se validan con PyYAML. En un CI real, ese último paso
 sería `promtool check rules alertas.yml` — se menciona en la demo, no se ejecuta.
 
-### Ver `/metrics` en vivo (opcional, para el directo)
+El ACTO 4 arranca el pipeline como servicio en el **puerto 8010**, lo **mata** y comprueba qué
+alertas saltan. Lo hace la propia celda: no tienes que lanzar nada.
+
+### Ver `/metrics` en vivo (opcional)
 
 ```bash
 python demo/nf4_smartcity/pipeline_demo.py --modo normal --puerto 8000
-# en Codespaces, abre el puerto 8000 en la pestaña "Ports"
+# en Codespaces, abre el puerto 8000 en la pestaña "Ports" y recarga la página
 ```
 
-Es el equivalente a la Spark UI del NF2: ver el endpoint que Prometheus scrapearía.
+Es el equivalente a la Spark UI del NF2: ver el endpoint que Prometheus scrapearía. En modo
+servicio, el pipeline de la demo **sigue procesando**: al recargar verás los Counters subir.
+(El `pipeline.py` de tu actividad, en cambio, procesa una vez y se queda quieto: lo explica la
+teoría, §4.7.)
 
 ## Ficheros
 
